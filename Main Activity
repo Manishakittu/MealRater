@@ -1,0 +1,29 @@
+import UIKit
+
+class ViewController: UIViewController {
+
+    @IBOutlet weak var dishNameTextField: UITextField!
+    @IBOutlet weak var restaurantNameTextField: UITextField!
+    @IBOutlet weak var dishNameLabel: UILabel!
+    @IBOutlet weak var restaurantNameLabel: UILabel!
+    @IBOutlet weak var ratingLabel: UILabel!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+
+    @IBAction func rateMealButtonTapped(_ sender: UIButton) {
+        // Code to navigate to the rating view controller
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let ratingVC = storyboard.instantiateViewController(withIdentifier: "RatingViewController") as? RatingViewController {
+            ratingVC.delegate = self
+            navigationController?.pushViewController(ratingVC, animated: true)
+        }
+    }
+}
+
+extension ViewController: RatingViewControllerDelegate {
+    func didUpdateRating(_ rating: Int) {
+        ratingLabel.text = "Rating: \(rating)"
+    }
+}

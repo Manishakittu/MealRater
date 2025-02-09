@@ -1,0 +1,30 @@
+import UIKit
+
+protocol RatingViewControllerDelegate: AnyObject {
+    func didUpdateRating(_ rating: Int)
+}
+
+class RatingViewController: UIViewController {
+
+    @IBOutlet weak var ratingSlider: UISlider!
+    @IBOutlet weak var ratingLabel: UILabel!
+    
+    weak var delegate: RatingViewControllerDelegate?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        ratingSlider.minimumValue = 1
+        ratingSlider.maximumValue = 5
+    }
+    
+    @IBAction func sliderValueChanged(_ sender: UISlider) {
+        let rating = Int(sender.value)
+        ratingLabel.text = "Rating: \(rating)"
+    }
+    
+    @IBAction func submitRating(_ sender: UIButton) {
+        let rating = Int(ratingSlider.value)
+        delegate?.didUpdateRating(rating)
+        navigationController?.popViewController(animated: true)
+    }
+}
