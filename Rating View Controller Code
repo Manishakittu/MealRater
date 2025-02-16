@@ -1,0 +1,20 @@
+import UIKit
+
+protocol RatingViewControllerDelegate: AnyObject {
+    func didUpdateRating(_ rating: Int16)
+}
+
+class RatingViewController: UIViewController {
+    @IBOutlet weak var ratingSlider: UISlider!
+    weak var delegate: RatingViewControllerDelegate?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+
+    @IBAction func saveRatingButtonTapped(_ sender: UIButton) {
+        let rating = Int16(ratingSlider.value)
+        delegate?.didUpdateRating(rating)
+        navigationController?.popViewController(animated: true)
+    }
+}
