@@ -1,0 +1,55 @@
+import UIKit
+import CoreData
+
+class MainViewController: UIViewController {
+    @IBOutlet weak var restaurantTextField: UITextField!
+    @IBOutlet weak var mealTextField: UITextField!
+    @IBOutlet weak var ratingLabel: UILabel!
+
+    var rating: Int16 = 0
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+
+    @IBAction func saveButtonTapped(_ sender: UIButton) {
+        guard let restaurantName = restaurantTextField.text, !restaurantName.isEmpty,
+              let mealName = mealTextField.text, !mealName.isEmpty else {
+            // Show an alert if fields are empty
+            return
+        }
+
+        saveMeal(restaurantName: restaurantName, mealName: mealName, rating: rating)
+    }
+
+    func saveMeal(restaurantName: String, mealName: String, rating: Int16) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let entity = NSEntityDescription.entity(forEntityName: "Meal", in: managedContext)!
+        let meal = NSManagedObject(entity: entity, insertInto: managedContext)
+
+        meal.setValue(restaurantName, forKey: "restaurantName")
+        meal.setValue(mealName, forKey: "mealName")
+        meal.setValue(rating, forKey: "rating")
+
+        do {
+            try managedContext.save()
+            // Show success message
+        } catch let error as NSError {
+            print("Could not save. \(error), \(error.userInfo)")
+        }
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showRating", let ratingVC = segue.destination as? RatingViewController {
+            ratingVC.delegate = self
+        }
+    }
+}
+
+extension MainViewController: RatingViewControllerDelegate {
+    func didUpdateRating(_ rating: Int16) {
+        self.rating = rating
+        ratingLabel.text = "Rating: \(rating)"
+    }
+}
